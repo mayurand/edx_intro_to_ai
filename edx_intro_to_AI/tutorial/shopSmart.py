@@ -29,7 +29,18 @@ def shopSmart(orderList, fruitShops):
         fruitShops: List of FruitShops
     """
     "*** YOUR CODE HERE ***"
-    return None
+    total_cost_shop = {}
+    
+    for shop in fruitShops:
+        try:
+            totalCost = shop.getPriceOfOrder(orderList)
+        except:
+            print "Key not in dictionary"
+            return None
+        total_cost_shop[shop]=totalCost
+    
+    # Return kye of min value of all shops
+    return min(total_cost_shop.items(), key=lambda x: x[1]) [0]
 
 if __name__ == '__main__':
   "This code runs when you invoke the script from the command line"
