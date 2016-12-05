@@ -12,7 +12,7 @@
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
 
-import shop
+from week1_basics import shop
 
 class Town:
 

@@ -21,7 +21,7 @@ import json
 import traceback
 import pdb
 from collections import defaultdict
-import util
+from week1_basics import util
 
 class Grades:
   "A data structure for project grades, along with formatting code to display them"

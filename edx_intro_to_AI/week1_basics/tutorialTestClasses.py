@@ -12,7 +12,7 @@
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
 
-import testClasses
+from week1_basics import testClasses
 
 # Simple test case which evals an arbitrary piece of python code.
 # The test is correct if the output of the code given the student's

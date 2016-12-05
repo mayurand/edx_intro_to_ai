@@ -13,13 +13,13 @@
 
 
 # imports from python standard library
-import grading
+from week1_basics import grading
 import imp
 import optparse
 import os
 import re
 import sys
-import projectParams
+from week1_basics import projectParams
 import random
 random.seed(0)
 try: 
@@ -196,8 +196,8 @@ def printTest(testDict, solutionDict):
 
 
 def runTest(testName, moduleDict, printTestCase=False, display=None):
-    import testParser
-    import testClasses
+    from week1_basics import testParser
+    from week1_basics import testClasses
     for module in moduleDict:
         setattr(sys.modules[__name__], module, moduleDict[module])
 
@@ -249,8 +249,8 @@ def evaluate(generateSolutions, testRoot, moduleDict, exceptionMap=ERROR_HINT_MA
             printTestCase=False, questionToGrade=None, display=None):
     # imports of testbench code.  note that the testClasses import must follow
     # the import of student code due to dependencies
-    import testParser
-    import testClasses
+    from week1_basics import testParser
+    from week1_basics import testClasses
     for module in moduleDict:
         setattr(sys.modules[__name__], module, moduleDict[module])
 
@@ -323,7 +323,7 @@ def getDisplay(graphicsByDefault, options=None):
             return graphicsDisplay.PacmanGraphics(1, frameTime=.05)
         except ImportError:
             pass
-    import textDisplay
+    from week1_basics import textDisplay
     return textDisplay.NullGraphics()
 
 

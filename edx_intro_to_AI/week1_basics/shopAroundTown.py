@@ -25,8 +25,8 @@ At gas price 5 the best route is: ['shop2']
 At gas price -1 the best route is: ['shop2', 'shop1', 'shop3']
 """
 
-import shop
-import town
+from week1_basics import shop
+from week1_basics import town
 
 def shopAroundTown(orderList, fruitTown, gasCost):
     """
