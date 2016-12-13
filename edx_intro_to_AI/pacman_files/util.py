@@ -476,7 +476,7 @@ def normalize(vectorOrCounter):
 def nSample(distribution, values, n):
     if sum(distribution) != 1:
         distribution = normalize(distribution)
-    rand = [random.random() for i in range(n)]
+    rand = [random.random() for _ in range(n)]
     rand.sort()
     samples = []
     samplePos, distPos, cdf = 0,0, distribution[0]
@@ -555,7 +555,7 @@ def arrayInvert(array):
     """
     Inverts a matrix stored as a list of lists.
     """
-    result = [[] for i in array]
+    result = [[] for _ in array]
     for outer in array:
         for inner in range(len(outer)):
             result[inner].append(outer[inner])
