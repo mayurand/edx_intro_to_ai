@@ -75,8 +75,6 @@ def tinyMazeSearch(problem):
     return  [s, s, w, s, w, w, s, w]
 
 
-def recursive_DFS():
-    
 
 def depthFirstSearch(problem):
     """
@@ -98,42 +96,50 @@ def depthFirstSearch(problem):
 #     print "Start's successors:", problem.getSuccessors(problem.getStartState())
 
     ## Relevant imports
-    
-    nodes_explored = []     ## Initialize explored set to empty
-    action_taken = []
-    
+
     
     ## Initialize frontier using the initial state of problem
     frontier = util.Stack()
-    
-    for successor in (problem.getSuccessors(problem.getStartState())):
-        frontier.push(successor)
-        
+    frontier.push((problem.getStartState(),[],[]))
  
-    while True:
-        if frontier.isEmpty():
-            print 'No Solution'
-            return NoSolution 
-        
+    while not frontier.isEmpty():
+
         ## Pop a node from the frontier and add the corresponding action
-        leaf_node = frontier.pop()
-        action_taken.append(leaf_node[1])
-        
-        if problem.isGoalState(leaf_node[0]):
-            print action_taken
-            return action_taken
-        
-        nodes_explored.append(leaf_node[0])
-        
-        for successor in problem.getSuccessors(leaf_node[0]):
-            if successor[0] not in nodes_explored:  
-                frontier.push(successor)
+        ## The node and action_taken are initialized here
+        node, action_taken, explored_set = frontier.pop()
+        print str(node) + "\n"
+
+        for coord, direction, steps in problem.getSuccessors(node):
+            if not coord in explored_set: # This is implementing graph search
+                if problem.isGoalState(coord):
+                    return action_taken + [direction]
+                frontier.push((coord, action_taken + [direction], explored_set + [node] ))
+
+
+    return []
         
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    ## Initialize frontier using the initial state of problem
+    frontier = util.Queue()
+    frontier.push((problem.getStartState(),[],[]))
+ 
+    while not frontier.isEmpty():
+
+        ## Pop a node from the frontier and add the corresponding action
+        ## The node and action_taken are initialized here
+        node, action_taken, explored_set = frontier.pop()
+        
+
+        for coord, direction, steps in problem.getSuccessors(node):
+            if not coord in explored_set: # This is implementing graph search
+                if problem.isGoalState(coord):
+                    return action_taken + [direction]
+                frontier.push((coord, action_taken + [direction], explored_set + [node] ))
+
+
+    return []
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
