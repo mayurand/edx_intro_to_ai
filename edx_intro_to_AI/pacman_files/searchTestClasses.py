@@ -32,9 +32,9 @@ def wrap_solution(solution):
 
 
 def followAction(state, action, problem):
-  for successor1, action1, cost1 in problem.getSuccessors(state):
-    if action == action1: return successor1
-  return None
+    for successor1, action1, cost1 in problem.getSuccessors(state):
+        if action == action1: return successor1
+    return None
 
 def followPath(path, problem):
   state = problem.getStartState()

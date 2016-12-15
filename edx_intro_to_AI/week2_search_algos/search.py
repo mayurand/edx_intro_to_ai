@@ -90,31 +90,26 @@ def depthFirstSearch(problem):
     print "Is the start a goal?", problem.isGoalState(problem.getStartState())
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
-    "*** YOUR CODE HERE ***"
-#     print "Start:", problem.getStartState()
-#     print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-#     print "Start's successors:", problem.getSuccessors(problem.getStartState())
 
-    ## Relevant imports
-
-    
     ## Initialize frontier using the initial state of problem
     frontier = util.Stack()
+    
+    ## Any state is given as the state that you are into
+    ## by taking some action. The state is defined by postion, action and direction
     frontier.push((problem.getStartState(),[],[]))
- 
+    
     while not frontier.isEmpty():
 
         ## Pop a node from the frontier and add the corresponding action
         ## The node and action_taken are initialized here
         node, action_taken, explored_set = frontier.pop()
-        print str(node) + "\n"
 
         for coord, direction, steps in problem.getSuccessors(node):
             if not coord in explored_set: # This is implementing graph search
                 if problem.isGoalState(coord):
                     return action_taken + [direction]
                 frontier.push((coord, action_taken + [direction], explored_set + [node] ))
-
+                # print str(action_taken)+ "\n"
 
     return []
         
@@ -123,6 +118,7 @@ def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     ## Initialize frontier using the initial state of problem
     frontier = util.Queue()
+    
     frontier.push((problem.getStartState(),[],[]))
  
     while not frontier.isEmpty():
@@ -131,7 +127,6 @@ def breadthFirstSearch(problem):
         ## The node and action_taken are initialized here
         node, action_taken, explored_set = frontier.pop()
         
-
         for coord, direction, steps in problem.getSuccessors(node):
             if not coord in explored_set: # This is implementing graph search
                 if problem.isGoalState(coord):
@@ -143,20 +138,58 @@ def breadthFirstSearch(problem):
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    frontier = util.PriorityQueue()
+    
+    cost_of_actions = 0
+
+    frontier.push((problem.getStartState(),[],[]),cost_of_actions)
+ 
+    while not frontier.isEmpty():
+
+        ## Pop a node from the frontier and add the corresponding action
+        ## The node and action_taken are initialized here
+        
+        node, action_taken, explored_set = frontier.pop()
+        
+        for coord, direction, steps in problem.getSuccessors(node):
+            if not coord in explored_set: # This is implementing graph search
+                if problem.isGoalState(coord):
+                    print(problem.getCostOfActions(action_taken + [direction]))
+                    return action_taken + [direction]
+                frontier.push((coord, action_taken + [direction], explored_set + [node]),problem.getCostOfActions(action_taken + [direction]))
+
 
 def nullHeuristic(state, problem=None):
     """
     A heuristic function estimates the cost from the current state to the nearest
     goal in the provided SearchProblem.  This heuristic is trivial.
     """
+   # return manhattanDistance( xy1, xy2 )
     return 0
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    frontier = util.PriorityQueue()
+    
+    total_cost = 0
+
+    frontier.push((problem.getStartState(),[],[]),total_cost)
+ 
+    while not frontier.isEmpty():
+
+        ## Pop a node from the frontier and add the corresponding action
+        ## The node and action_taken are initialized here
+        
+        node, action_taken, explored_set = frontier.pop()
+        
+        for coord, direction, steps in problem.getSuccessors(node):
+            if not coord in explored_set: # This is implementing graph search
+                if problem.isGoalState(coord):
+                    return action_taken + [direction]
+                total_cost = heuristic(coord, problem) +\
+                 problem.getCostOfActions(action_taken + [direction])
+                frontier.push((coord, action_taken + [direction], explored_set + [node]),total_cost)
+
 
 
 # Abbreviations
