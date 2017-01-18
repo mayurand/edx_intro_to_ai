@@ -11,8 +11,6 @@
 # Student side autograding was added by Brad Miller, Nick Hay, and
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
-from astropy.wcs.docstrings import NoSolution
-
 
 """
 In search.py, you will implement generic search algorithms which are called by
@@ -25,7 +23,6 @@ class SearchProblem:
     """
     This class outlines the structure of a search problem, but doesn't implement
     any of the methods (in object-oriented terminology: an abstract class).
-
     You do not need to change anything in this class, ever.
     """
 
@@ -38,7 +35,6 @@ class SearchProblem:
     def isGoalState(self, state):
         """
           state: Search state
-
         Returns True if and only if the state is a valid goal state.
         """
         util.raiseNotDefined()
@@ -46,7 +42,6 @@ class SearchProblem:
     def getSuccessors(self, state):
         """
           state: Search state
-
         For a given state, this should return a list of triples, (successor,
         action, stepCost), where 'successor' is a successor to the current
         state, 'action' is the action required to get there, and 'stepCost' is
@@ -57,7 +52,6 @@ class SearchProblem:
     def getCostOfActions(self, actions):
         """
          actions: A list of actions to take
-
         This method returns the total cost of a particular sequence of actions.
         The sequence must be composed of legal moves.
         """
@@ -74,89 +68,64 @@ def tinyMazeSearch(problem):
     w = Directions.WEST
     return  [s, s, w, s, w, w, s, w]
 
+def generic_search(problem, fringe, add_to_fringe_fn):
+    closed = set()
+    start = (problem.getStartState(), 0, [])  # (node, cost, path)
+    add_to_fringe_fn(fringe, start, 0)
+
+    while not fringe.isEmpty():
+        (node, cost, path) = fringe.pop()
+
+        if problem.isGoalState(node):
+            return path
+
+        if not node in closed:
+            closed.add(node)
+
+            for child_node, child_action, child_cost in problem.getSuccessors(node):
+                new_cost = cost + child_cost
+                new_path = path + [child_action]
+                new_state = (child_node, new_cost, new_path)
+                add_to_fringe_fn(fringe, new_state, new_cost)
 
 
 def depthFirstSearch(problem):
     """
     Search the deepest nodes in the search tree first.
-
     Your search algorithm needs to return a list of actions that reaches the
     goal. Make sure to implement a graph search algorithm.
-
     To get started, you might want to try some of these simple commands to
     understand the search problem that is being passed in:
-
     print "Start:", problem.getStartState()
     print "Is the start a goal?", problem.isGoalState(problem.getStartState())
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
+    fringe = util.Stack()
+    def add_to_fringe_fn(fringe, state, cost):
+        fringe.push(state)
 
-    ## Initialize frontier using the initial state of problem
-    frontier = util.Stack()
-    
-    ## Any state is given as the state that you are into
-    ## by taking some action. The state is defined by postion, action and direction
-    frontier.push((problem.getStartState(),[],[]))
-    
-    while not frontier.isEmpty():
+    return generic_search(problem, fringe, add_to_fringe_fn)
 
-        ## Pop a node from the frontier and add the corresponding action
-        ## The node and action_taken are initialized here
-        node, action_taken, explored_set = frontier.pop()
 
-        for coord, direction, steps in problem.getSuccessors(node):
-            if not coord in explored_set: # This is implementing graph search
-                if problem.isGoalState(coord):
-                    return action_taken + [direction]
-                frontier.push((coord, action_taken + [direction], explored_set + [node] ))
-                # print str(action_taken)+ "\n"
-
-    return []
-        
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    ## Initialize frontier using the initial state of problem
-    frontier = util.Queue()
-    
-    frontier.push((problem.getStartState(),[],[]))
- 
-    while not frontier.isEmpty():
+    fringe = util.Queue()
+    def add_to_fringe_fn(fringe, state, cost):
+        fringe.push(state)
 
-        ## Pop a node from the frontier and add the corresponding action
-        ## The node and action_taken are initialized here
-        node, action_taken, explored_set = frontier.pop()
-        
-        for coord, direction, steps in problem.getSuccessors(node):
-            if not coord in explored_set: # This is implementing graph search
-                if problem.isGoalState(coord):
-                    return action_taken + [direction]
-                frontier.push((coord, action_taken + [direction], explored_set + [node] ))
+    return generic_search(problem, fringe, add_to_fringe_fn)
 
 
-    return []
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
-    frontier = util.PriorityQueue()
-    
-    cost_of_actions = 0
+    fringe = util.PriorityQueue()
+    def add_to_fringe_fn(fringe, state, cost):
+        fringe.push(state, cost)
 
-    frontier.push((problem.getStartState(),[],[]),cost_of_actions)
- 
-    while not frontier.isEmpty():
+    return generic_search(problem, fringe, add_to_fringe_fn)
 
-        ## Pop a node from the frontier and add the corresponding action
-        ## The node and action_taken are initialized here
-        
-        node, action_taken, explored_set = frontier.pop()
-        
-        for coord, direction, steps in problem.getSuccessors(node):
-            if not coord in explored_set: # This is implementing graph search
-                if problem.isGoalState(coord):
-                    print(problem.getCostOfActions(action_taken + [direction]))
-                    return action_taken + [direction]
-                frontier.push((coord, action_taken + [direction], explored_set + [node]),problem.getCostOfActions(action_taken + [direction]))
 
 
 def nullHeuristic(state, problem=None):
@@ -164,32 +133,16 @@ def nullHeuristic(state, problem=None):
     A heuristic function estimates the cost from the current state to the nearest
     goal in the provided SearchProblem.  This heuristic is trivial.
     """
-   # return manhattanDistance( xy1, xy2 )
     return 0
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    frontier = util.PriorityQueue()
-    
-    total_cost = 0
+    fringe = util.PriorityQueue()
+    def add_to_fringe_fn(fringe, state, cost):
+        new_cost = cost + heuristic(state[0], problem)
+        fringe.push(state, new_cost)
 
-    frontier.push((problem.getStartState(),[],[]),total_cost)
- 
-    while not frontier.isEmpty():
-
-        ## Pop a node from the frontier and add the corresponding action
-        ## The node and action_taken are initialized here
-        
-        node, action_taken, explored_set = frontier.pop()
-        
-        for coord, direction, steps in problem.getSuccessors(node):
-            if not coord in explored_set: # This is implementing graph search
-                if problem.isGoalState(coord):
-                    return action_taken + [direction]
-                total_cost = heuristic(coord, problem) +\
-                 problem.getCostOfActions(action_taken + [direction])
-                frontier.push((coord, action_taken + [direction], explored_set + [node]),total_cost)
-
+    return generic_search(problem, fringe, add_to_fringe_fn)
 
 
 # Abbreviations

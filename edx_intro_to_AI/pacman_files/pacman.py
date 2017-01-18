@@ -479,7 +479,7 @@ def readCommand( argv ):
     """
     from optparse import OptionParser
     usageStr = """
-    USAGE:      python pacman.py <options>
+    USAGE:      python pacman.py <options>rules
     EXAMPLES:   (1) python pacman.py
                     - starts an interactive game
                 (2) python pacman.py --layout smallClassic --zoom 2

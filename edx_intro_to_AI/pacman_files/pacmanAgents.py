@@ -23,9 +23,15 @@ class LeftTurnAgent(game.Agent):
 
     def getAction(self, state):
         legal = state.getLegalPacmanActions()
+        
         current = state.getPacmanState().configuration.direction
+        print('Current:')
+        print(current)
         if current == Directions.STOP: current = Directions.NORTH
+        
         left = Directions.LEFT[current]
+        print(left)
+        
         if left in legal: return left
         if current in legal: return current
         if Directions.RIGHT[current] in legal: return Directions.RIGHT[current]
