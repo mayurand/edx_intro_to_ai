@@ -66,7 +66,7 @@ class SearchAgent(Agent):
     location (1,1)
 
     Options for fn include:
-      depthFirst0Search or dfs
+      depthFirstSearch or dfs
       breadthFirstSearch or bfs
 
 

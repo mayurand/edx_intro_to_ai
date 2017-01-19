@@ -8,5 +8,6 @@
 <pydev_pathproperty name="org.python.pydev.PROJECT_EXTERNAL_SOURCE_PATH">
 <path>/home/atros/git/edx_intro_to_ai/edx_intro_to_AI/pacman_files</path>
 <path>/home/atros/git/edx_intro_to_ai/edx_intro_to_AI/week2_search_algos</path>
+<path>/home/atros/git/edx_intro_to_ai/edx_intro_to_AI/week4_multi_agent_search</path>
 </pydev_pathproperty>
 </pydev_project>

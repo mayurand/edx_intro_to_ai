@@ -1,7 +1,12 @@
 ## To run astar on corners problem
 -l tinyCorners -p SearchAgent -a fn=astar,heuristic=cornersHeuristic,prob=CornersProblem
+-l mediumCorners -p AStarCornersAgent -z 0.5
 
 ## To run bfs on corners problem
 -l tinyCorners -p SearchAgent -a fn=bfs,prob=CornersProblem
 
 -l mediumCorners -p SearchAgent -a fn=bfs,prob=CornersProblem
+
+
+## Food search problem
+-l testSearch -p AStarFoodSearchAgent
