@@ -323,7 +323,6 @@ class CornersProblem(search.SearchProblem):
             if not self.walls[nextx][nexty]:
                 
                 corners =  tuple(x for x in state[1] if x != (nextx, nexty))
-                print corners
                 successors.append((((nextx, nexty), corners), action, 1))
                 
         # Bookkeeping for display purposes
@@ -401,7 +400,7 @@ class FoodSearchProblem:
         return self.start
 
     def isGoalState(self, state):
-        return state[1].count() == 0
+        return state[1].count() == 0 # All the food dots should be gone
 
     def getSuccessors(self, state):
         "Returns successor states, the actions they require, and a cost of 1."
@@ -470,8 +469,15 @@ def foodHeuristic(state, problem):
 
     distances = [0]
     for food_pos in foodGrid.asList():
-        # distances.append(util.manhattanDistance(state[0], corner))
-        distances.append(mazeDistance(position, food_pos, problem.startingGameState))
+        # distances.append(util.manhattanDistance(position, food_pos))
+        
+        # Returns length of total actions to be taken for going from position to food_pos
+        if str(position)+str(food_pos) in problem.heuristicInfo:
+            distance_val = problem.heuristicInfo[str(position)+str(food_pos)]
+        else:
+            distance_val = mazeDistance(position, food_pos, problem.startingGameState)
+            problem.heuristicInfo[str(position)+str(food_pos)] = distance_val
+        distances.append(distance_val)
         
     return max(distances)
 
@@ -556,4 +562,4 @@ def mazeDistance(point1, point2, gameState):
     assert not walls[x1][y1], 'point1 is a wall: ' + str(point1)
     assert not walls[x2][y2], 'point2 is a wall: ' + str(point2)
     prob = PositionSearchProblem(gameState, start=point1, goal=point2, warn=False, visualize=False)
-    return len(search.bfs(prob))
+    return len(search.bfs(prob)) 

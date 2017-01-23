@@ -28,7 +28,6 @@ class ReflexAgent(Agent):
       headers.
     """
 
-
     def getAction(self, gameState):
         """
         You do not need to change this method, but you're welcome to.
@@ -40,13 +39,17 @@ class ReflexAgent(Agent):
         """
         # Collect legal moves and successor states
         legalMoves = gameState.getLegalActions()
+        
+        print legalMoves
 
         # Choose one of the best actions
         scores = [self.evaluationFunction(gameState, action) for action in legalMoves]
+        
         bestScore = max(scores)
         bestIndices = [index for index in range(len(scores)) if scores[index] == bestScore]
         chosenIndex = random.choice(bestIndices) # Pick randomly among the best
-
+        
+        
         "Add more of your code here if you want to"
 
         return legalMoves[chosenIndex]
@@ -73,8 +76,50 @@ class ReflexAgent(Agent):
         newGhostStates = successorGameState.getGhostStates()
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
 
-        "*** YOUR CODE HERE ***"
-        return successorGameState.getScore()
+        """
+        This could be solved in several ways. 
+        
+        -> I initially just took the food distance i.e. that the 
+        distance to each food item from current pacman position and took a max of the list. Also,
+        the total distance of pacman to the ghosts was taken. This resulted in legalaction to be chosen
+        as STOP because the evaluation function for the STOP action was with least cost.
+        
+        -> Then the successorGameState.getScore() was added to the above stuff. Again, the pacman would
+        STOP at certain positions and do nothing.
+        
+        -> This made me realize the need of weights for the food distance and ghost distance which are 
+        two different parameters for the same action selection of pacman. However, what value should the weights take?
+        Normalizing the different distances did solve the problem in some instances but still pacman took lot of time.
+        
+        -> Finally, some random values of weights for ghost and food were allotted and the inverse of distance
+        for each (food and agent) was taken. Although still the problem didnt solve ;)
+        
+        
+        """
+
+        WEIGHT_GHOST = 10
+        WEIGHT_FOOD = 10
+        
+        value = successorGameState.getScore()
+
+        total_ghost_distances = []
+        
+        for ghostState in newGhostStates:
+            total_ghost_distances.append(util.manhattanDistance(newPos,ghostState.getPosition()))
+        
+        distanceToGhost = min(total_ghost_distances)
+        if  distanceToGhost > 0:
+            value -= WEIGHT_GHOST / distanceToGhost
+        
+        total_food_distances = []
+        for food in newFood.asList():
+            total_food_distances.append(util.manhattanDistance(newPos,food))
+            
+        if len(total_food_distances):
+            value += WEIGHT_FOOD / max(total_food_distances)
+        
+        return value
+        # return successorGameState.getScore()
 
 def scoreEvaluationFunction(currentGameState):
     """

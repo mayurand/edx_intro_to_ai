@@ -10,3 +10,6 @@
 
 ## Food search problem
 -l testSearch -p AStarFoodSearchAgent
+
+## Reflex agent - adversarial problem
+-p ReflexAgent -l openClassic
