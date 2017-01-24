@@ -154,6 +154,50 @@ class MinimaxAgent(MultiAgentSearchAgent):
     """
       Your minimax agent (question 2)
     """
+    
+    # A score maximizing agent
+    def maxAgent(self, gameState, agentIndex, value = -10000000):
+        actions = gameState.getLegalActions(agentIndex)
+        value_of_state = []
+        value_of_state.append(v)
+        for action in actions:
+            successorGameState = gameState.generateSuccessor(agentIndex, action)
+            value_of_state.append(self.evaluationFunction(successorGameState))
+
+        return max(value_of_state)
+        
+    # A score minimizing agent        
+    def minAgent(self, gameState, agentIndex, value = 10000000):
+        
+        actions = gameState.getLegalActions(agentIndex)
+        value_of_state = []
+        value_of_state.append(v)
+        for action in actions:
+            successorGameState = gameState.generateSuccessor(agentIndex, action)
+            value_of_state.append(self.evaluationFunction(successorGameState))
+
+        return min(value_of_state)
+    
+    
+    def generic_search(problem, fringe, add_to_fringe_fn):
+        closed = set()
+        start = (problem.getStartState(), 0, [])  # (node, cost, path)
+        add_to_fringe_fn(fringe, start, 0)
+    
+        while not fringe.isEmpty():
+            (node, cost, path) = fringe.pop()
+    
+            if problem.isGoalState(node):
+                return path
+    
+            if not node in closed:
+                closed.add(node)
+    
+                for child_node, child_action, child_cost in problem.getSuccessors(node):
+                    new_cost = cost + child_cost
+                    new_path = path + [child_action]
+                    new_state = (child_node, new_cost, new_path)
+                    add_to_fringe_fn(fringe, new_state, new_cost)
 
     def getAction(self, gameState):
         """
@@ -172,8 +216,33 @@ class MinimaxAgent(MultiAgentSearchAgent):
           gameState.getNumAgents():
             Returns the total number of agents in the game
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        
+        # You basically apply dfs here
+        
+        fringe = util.Stack()
+        def add_to_fringe_fn(fringe, state, cost):
+            fringe.push(state)
+
+        return generic_search(problem, fringe, add_to_fringe_fn)
+        
+        for agentIndex in range(gameState.getNumAgents()):
+            
+            depth_val = 0
+            while self.depth <= depth_val:
+                        
+                if agentIndex == 0: # Pacman or maximizing agent
+                    self.maxAgent(gameState, agentIndex)
+
+                    
+                else: # Ghosts or minimizing agent
+                    self.minAgent(gameState, agentIndex)
+                
+                depth_val += 1
+
+                
+        
+        
+        
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
