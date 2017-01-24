@@ -13,3 +13,11 @@
 
 ## Reflex agent - adversarial problem
 -p ReflexAgent -l openClassic
+
+
+## Minimax Agent with 1000 games and graphics turned off
+-p MinimaxAgent -l minimaxClassic -a depth=4 -q -n 1000
+
+
+## Speed up
+--frameTime 0

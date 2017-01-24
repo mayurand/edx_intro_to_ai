@@ -5,9 +5,5 @@
 </pydev_pathproperty>
 <pydev_property name="org.python.pydev.PYTHON_PROJECT_VERSION">python 2.7</pydev_property>
 <pydev_property name="org.python.pydev.PYTHON_PROJECT_INTERPRETER">anaconda2</pydev_property>
-<pydev_pathproperty name="org.python.pydev.PROJECT_EXTERNAL_SOURCE_PATH">
-<path>/home/atros/git/edx_intro_to_ai/edx_intro_to_AI/pacman_files</path>
-<path>/home/atros/git/edx_intro_to_ai/edx_intro_to_AI/week2_search_algos</path>
-<path>/home/atros/git/edx_intro_to_ai/edx_intro_to_AI/week4_multi_agent_search</path>
-</pydev_pathproperty>
+
 </pydev_project>
