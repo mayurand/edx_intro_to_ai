@@ -204,7 +204,8 @@ class MinimaxAgent(MultiAgentSearchAgent):
             )
             return (max if self.isPacman(gamestate, agent) else min)(successors)
 
-        # return the best of pacman's possible moves
+        # return the best of pacman's possible moves 
+        # This is action selection step
         return max(gameState.getLegalActions(0),
                    key = lambda x: minimax(gameState.generateSuccessor(0, x), 0, 1)) 
         
@@ -219,11 +220,45 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
     """
 
     def getAction(self, gameState):
-        """
-          Returns the minimax action using self.depth and self.evaluationFunction
-        """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        
+        #  Returns the minimax action using self.depth and self.evaluationFunction
+
+        def dispatch(state, depth, agent, A=float("-inf"), B=float("inf")):
+            if agent == state.getNumAgents():  # next depth
+                depth += 1
+                agent = 0
+
+            if self.isTerminal(state, depth, agent):  # dead end
+                return self.evaluationFunction(state), None
+
+            if self.isPacman(state, agent):
+                return getValue(state, depth, agent, A, B, float('-inf'), max)
+            else:
+                return getValue(state, depth, agent, A, B, float('inf'), min)
+
+        def getValue(state, depth, agent, A, B, ms, mf):
+            bestScore = ms
+            bestAction = None
+
+            for action in state.getLegalActions(agent):
+                successor = state.generateSuccessor(agent, action)
+                score,_ = dispatch(successor, depth, agent + 1, A, B)
+                bestScore, bestAction = mf((bestScore, bestAction), (score, action))
+
+                if self.isPacman(state, agent):
+                    if bestScore > B:
+                        return bestScore, bestAction
+                    A = mf(A, bestScore)
+                else:
+                    if bestScore < A:
+                        return bestScore, bestAction
+                    B = mf(B, bestScore)
+
+            return bestScore, bestAction
+
+        _,action = dispatch(gameState, 0, 0)
+        return action
+        
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
@@ -237,19 +272,132 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
           All ghosts should be modeled as choosing uniformly at random from their
           legal moves.
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        def expectimax(state, depth, agent):
+            if agent == state.getNumAgents():  # is pacman
+                return expectimax(state, depth + 1, 0)  # start next depth
+
+            if self.isTerminal(state, depth, agent):
+                return self.evaluationFunction(state)  # return evaluation for bottom states
+
+            successors = [
+                expectimax(state.generateSuccessor(agent, action), depth, agent + 1)
+                for action in state.getLegalActions(agent)
+            ]
+
+            # for pacman, find the best move
+            if self.isPacman(state, agent):
+                return max(successors)
+
+            # we don't know what the ghost is going to do, so average out all of their moves
+            else:
+                return sum(successors)/len(successors)
+
+
+        # return the best of pacman's possible moves
+        return max(gameState.getLegalActions(0),
+                   key = lambda x: expectimax(gameState.generateSuccessor(0, x), 0, 1)
+        )
 
 def betterEvaluationFunction(currentGameState):
     """
       Your extreme ghost-hunting, pellet-nabbing, food-gobbling, unstoppable
       evaluation function (question 5).
 
-      DESCRIPTION: <write something here so we know what you did>
+      DESCRIPTION: Based on the currentGameState, following things were taken into consideration:
+      -> distance of Current position of pacman and nearest ghost
+      -> Number of remaining food pellets on the board
+      -> Big food particles and corresponding eatable ghost
+      -> Current score on scoreboard
+       
+      
     """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    newPos = currentGameState.getPacmanPosition()
+    newFood = currentGameState.getFood()
+    newGhostStates = currentGameState.getGhostStates()
+    newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
+
+    # These weights were given by trial and error 
+    WEIGHT_FOOD = 10.0 
+    WEIGHT_GHOST = 50.0
+    WEIGHT_EDIBLE_GHOST = 50000.0 # High weightwill increase the score ;)
+
+    # use game score to penalize moves (1 move = -1 score)
+    value = currentGameState.getScore()
+
+    # distance to ghosts
+    ghostValue = 0
+    for ghost in newGhostStates:
+        distance = manhattanDistance(newPos, newGhostStates[0].getPosition())
+        if distance > 0:
+            if ghost.scaredTimer > 0:  # if ghost is scared -> go for him
+                ghostValue += WEIGHT_EDIBLE_GHOST / distance
+            else:  # otherwise -> run!
+                ghostValue -= WEIGHT_GHOST / distance
+    value += ghostValue
+
+    # distance to closest food
+    distancesToFood = [manhattanDistance(newPos, x) for x in newFood.asList()]
+    if len(distancesToFood):
+        value += WEIGHT_FOOD / min(distancesToFood)
+
+    return value
+
 
 # Abbreviation
 better = betterEvaluationFunction
 
+
+"""
+
+
+    def getAction(self, gameState):
+        
+        #  Returns the minimax action using self.depth and self.evaluationFunction
+
+        def getNextAgent(gamestate, depth, agent, Alpha=float("-inf"), Beta=float("inf")):
+            
+            # Increment depth value
+            if agent == gamestate.getNumAgents():  # is pacman
+                return getNextAgent(gamestate, depth + 1, 0)  # start next depth
+
+            # Check if goal state i.e. till given depth
+            if self.isTerminal(gamestate, depth, agent):
+                # return evaluation for bottom states
+                return self.evaluationFunction(gamestate)  
+
+            if self.isPacman(gamestate, agent): # pacman agent, maximize evaluation function
+                return valueFunction(gamestate, depth, agent,float('-inf'),Alpha,Beta,max)
+            else: # ghost agent, minimize evaluation function
+                return valueFunction(gamestate, depth, agent, float('inf'),Alpha,Beta,min)            
+            
+            
+        def valueFunction(gamestate, depth, agent, value, Alpha, Beta, maxMinFunc):
+            bestScoreForAgent = value
+ 
+            for action in gamestate.getLegalActions(agent):
+                successor = gamestate.generateSuccessor(agent, action)
+                # Send successor state in getting next agent
+                bestScoreForAgent = getNextAgent(successor, depth, agent+ 1, Alpha=float("-inf"), Beta=float("inf"))
+                
+                if self.isPacman(gamestate, agent):
+                    if bestScoreForAgent > Beta:
+                        return bestScoreForAgent
+                    Alpha = maxMinFunc(Alpha, bestScoreForAgent)
+                else:
+                    if bestScoreForAgent < Alpha:
+                        return bestScoreForAgent
+                    Beta = maxMinFunc(Beta, bestScoreForAgent)
+
+            return bestScoreForAgent
+
+
+        # return the best of pacman's possible moves 
+        # This is action selection step
+        return max(gameState.getLegalActions(0),
+                   key = lambda x: getNextAgent(gameState.generateSuccessor(0, x), 0, 1)) 
+        
+        # The agents are taken starting from ghosts as the first action is by pacman which is already considered.               
+        
+
+"""

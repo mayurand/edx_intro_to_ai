@@ -16,8 +16,13 @@
 
 
 ## Minimax Agent with 1000 games and graphics turned off
--p MinimaxAgent -l minimaxClassic -a depth=4 -q -n 1000
+-p MinimaxAgent -l minimaxClassic -a depth=4 -q -n 10
 
+## Turn off graphics
+-q
+
+## Number of games
+-n 10
 
 ## Speed up
 --frameTime 0
