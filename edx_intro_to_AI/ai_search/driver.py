@@ -1,0 +1,62 @@
+'''
+Created on Feb 8, 2017
+
+@author: Mayur Andulkar
+
+driver.py takes the input game state for nxn game puzzle.
+
+The input is given as:
+
+python driver.py bfs 3,1,2,0,4,5,6,7,8
+
+    where bfs/dfs/ast/ida are the search algorithms to be used 
+    and
+    3,1,2,0,4,5,6,7,8 is the state of the game with 0 as null or blank tile 
+'''
+
+import sys
+
+ 
+#----------------------------------------------------------- def runGames(args):
+    
+def readCommand(argv):
+    """
+    Processes the command used to run game from the command line.
+    """
+    import argparse
+    parser = argparse.ArgumentParser()
+    
+    """
+    USAGE:      python driver.py <search> <initial game state>
+    EXAMPLES:   (1) python driver.py
+                    - starts the game with random config
+                    
+
+    """
+    print argv
+    parser.add_argument("search", type=str, help="the search algorithm")
+    parser.add_argument("gameState", type=str, \
+                        help="the game state to be input as a random numbers: 0,1,2,3,4,5,6,7,8")
+    args = parser.parse_args(argv)
+    print args.search
+    print args
+    
+    
+
+if __name__ == '__main__':
+    """
+    The main function called when pacman.py is run
+    from the command line:
+ 
+    > python driver.py
+ 
+    See the usage string for more details.
+ 
+    > python driver.py --help
+    """
+    args = readCommand( sys.argv[1:] ) # Get game components based on input
+    
+    
+    #runGames( **args )
+
+    pass
