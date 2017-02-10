@@ -6,6 +6,16 @@ Created on Feb 10, 2017
 
 from dataStructures import *
 
+# from driver import printPuzzle
+
+def printPuzzle(currentState):
+    for i in range(currentState.getGridSize()):
+        row_ = '|'
+        for j in range(currentState.getGridSize()):
+            row_ = row_ +' ' + str(currentState.getTilePositions()[i][j])+' |'
+        print row_
+    print " "
+
 def generic_search(problem, fringe, add_to_fringe_fn):
     closed = set()
     start = (problem.getStartState(), 0, [])  # (node, cost, path)
@@ -17,9 +27,10 @@ def generic_search(problem, fringe, add_to_fringe_fn):
         if problem.isGoalState(node):
             return path
 
-        tupleNode = tuple(tuple(l1) for l1 in node)    
-        if not tupleNode in closed:
-            closed.add(tupleNode)
+        if not node in closed:
+            closed.add(node)
+            printPuzzle(node)
+            raw_input("Press Enter to continue...")
 
             for child_node, child_action, child_cost in problem.getSuccessors(node):
                 new_cost = cost + child_cost

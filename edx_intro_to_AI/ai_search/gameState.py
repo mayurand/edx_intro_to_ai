@@ -27,6 +27,12 @@ class Actions:
                    Directions.LEFT:  (0, -1)}
 
     _directionsAsList = _directions.items()
+    
+    
+    _directPrecedence = {Directions.UP:4, 
+                         Directions.DOWN:3, 
+                         Directions.RIGHT:2, 
+                         Directions.LEFT:1}
 
     def reverseDirection(action):
         if action == Directions.UP:
@@ -53,6 +59,10 @@ class Actions:
             if 0<=next_y<gridSize and 0<=next_x<gridSize:
                 # possible.append(Actions.reverseDirection(dir_))
                 possible.append(([next_x,next_y],Actions.reverseDirection(dir_)))
+        
+        
+        # Sort the successors in the precedence of Up, Down, Left, Right actions
+        possible = sorted(possible, key=lambda x: Actions._directPrecedence[x[1]], reverse=True)
                 
         return possible
 
@@ -106,12 +116,8 @@ class GameState(Actions):
                     self.blankPos=[i,j]
                 count += 1
 
-        # for pos,direct_ in Actions.getPossibleActions(self.getBlankPos(),self.getGridSize()):
-           #------------------------- print self.getTilePositions()[pos],direct_
 
 
-
-    # TODO: Fix this function
     def generateSuccessor(self, pos=None, action=None):
         """
         Generates a new configuration reached by translating the current

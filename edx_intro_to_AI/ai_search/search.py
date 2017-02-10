@@ -15,6 +15,7 @@ import searchAlgorithms
 
 
 
+
 class SearchAgent():
     """
     This very general search agent finds a path using a supplied search
@@ -26,7 +27,7 @@ class SearchAgent():
         
         func = getattr(searchAlgorithms, fn)
         if 'heuristic' not in func.func_code.co_varnames:
-            print('[SearchAgent] using function ' + fn)
+            print('Search Algorithm being used:' + fn)
             self.searchFunction = func
         
         else:
@@ -45,23 +46,16 @@ class SearchAgent():
         if self.searchFunction == None: raise Exception, "No search function provided for SearchAgent"
         starttime = time.time()
         problem = SearchProblem(state) # Makes a new search problem
-        
         self.actions  = self.searchFunction(problem) # Find a path
         totalCost = problem.getCostOfActions(self.actions)
         print('Path found with total cost of %d in %.1f seconds' % (totalCost, time.time() - starttime))
         if '_expanded' in dir(problem): print('Search nodes expanded: %d' % problem._expanded)
 
-    def getAction(self):
+    def getActions(self):
         """
-        Returns the next action in the path chosen earlier (in
-        registerInitialState).  Return Directions.STOP if there is no further
-        action to take.
+        Returns all actions else None
         """
-        if 'actionIndex' not in dir(self): self.actionIndex = 0
-        i = self.actionIndex
-        self.actionIndex += 1
-        if i < len(self.actions):
-            return self.actions[i]
+        return self.actions
 
 class SearchProblem(Actions):
     """
@@ -73,8 +67,6 @@ class SearchProblem(Actions):
 
     Note: this search problem is fully specified; you should NOT change it.
     """
-    # TODO: Goal state input
-
     def __init__(self, gameState, cost= 1, start=None, warn=True, visualize=True):
         """
         Stores the start and goal.
@@ -83,8 +75,9 @@ class SearchProblem(Actions):
         costFn: In this case 1
         goal: A position in the gameState
         """
-        self.startState = gameState.getTilePositions()
+        self.startState = gameState
         self.cost = cost
+        self._expanded = 0
 
 
     def getStartState(self):
@@ -92,9 +85,9 @@ class SearchProblem(Actions):
 
     def isGoalState(self, state):
         current = 0
-        for row in range( 3 ):
-            for col in range( 3 ):
-                if current != self.startState[row][col]:
+        for row in range(state.getGridSize()):
+            for col in range(state.getGridSize()):
+                if current != state.getTilePositions()[row][col]:
                     return False
                 current += 1
         return True
@@ -110,15 +103,16 @@ class SearchProblem(Actions):
          required to get there, and 'stepCost' is the incremental
          cost of expanding to that successor
         """
-
         successors = []
         
+        
         for position, direct_ in state.getPossibleActions(state.getBlankPos(),state.getGridSize()):
-        #for position,direct_ in state.getPossibleActions(state.getBlankPos(),state.getGridSize()):
             nextState = state.generateSuccessor(position,direct_)
             cost = self.cost
-            successors.append(nextState, direct_, cost)
+            successors.append((nextState, direct_, cost))
 
+        self._expanded =+1
+        
         return successors
 
     def getCostOfActions(self, actions):

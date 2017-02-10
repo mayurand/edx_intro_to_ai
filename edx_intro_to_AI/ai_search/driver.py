@@ -37,25 +37,11 @@ def runGame(searchAlgo, initialGameState):
     currentState = GameState()
     currentState.initializeGame(initialGameState)
     printPuzzle(currentState) # To view whats going on
-    
-    
-    for pos, direct_ in currentState.getPossibleActions(currentState.getBlankPos(),currentState.getGridSize()):
-        #print pos
-        print currentState.getTilePositions()[pos[0]][pos[1]],direct_
 
     # Send the initial state to the SearchAgent along with searchType
     searchType = SearchAgent(searchAlgo)
     searchType.registerInitialState(currentState)
-    searchType.getAction(currentState)
-
-
-
-#------------------------------------------------------------------------------ 
-    #-------------------------------------- searchType = SearchAgent(searchAlgo)
-    #----------------------------- searchType.registerInitialState(currentState)
-#------------------------------------------------------------------------------ 
-#------------------------------------------------------------------------------ 
-    
+    print 'Actions to be executed:', searchType.getActions()
 
     
 def readCommand(argv):
