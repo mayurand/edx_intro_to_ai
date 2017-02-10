@@ -58,7 +58,8 @@ class Actions:
 
             if 0<=next_y<gridSize and 0<=next_x<gridSize:
                 # possible.append(Actions.reverseDirection(dir_))
-                possible.append(([next_x,next_y],Actions.reverseDirection(dir_)))
+                # possible.append(([next_x,next_y],Actions.reverseDirection(dir_)))
+                possible.append(([next_x,next_y],dir_))
         
         
         # Sort the successors in the precedence of Up, Down, Left, Right actions

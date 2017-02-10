@@ -111,7 +111,7 @@ class SearchProblem(Actions):
             cost = self.cost
             successors.append((nextState, direct_, cost))
 
-        self._expanded =+1
+        self._expanded += 1
         
         return successors
 

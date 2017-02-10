@@ -26,11 +26,13 @@ def generic_search(problem, fringe, add_to_fringe_fn):
 
         if problem.isGoalState(node):
             return path
-
-        if not node in closed:
-            closed.add(node)
-            printPuzzle(node)
-            raw_input("Press Enter to continue...")
+        
+        
+        node_tuple = tuple([tuple(node.getTilePositions()[i]) for i in range(len(node.getTilePositions()))])
+        if not node_tuple in closed:
+            closed.add(node_tuple)
+            # printPuzzle(node)
+            # raw_input("Press Enter to continue...")
 
             for child_node, child_action, child_cost in problem.getSuccessors(node):
                 new_cost = cost + child_cost
