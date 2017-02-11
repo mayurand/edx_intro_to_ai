@@ -14,8 +14,6 @@ from gameState import Actions
 import searchAlgorithms
 
 
-
-
 class SearchAgent():
     """
     This very general search agent finds a path using a supplied search
@@ -46,11 +44,35 @@ class SearchAgent():
         if self.searchFunction == None: raise Exception, "No search function provided for SearchAgent"
         starttime = time.time()
         problem = SearchProblem(state) # Makes a new search problem
-        self.actions  = self.searchFunction(problem) # Find a path
-        totalCost = problem.getCostOfActions(self.actions)
-        print('Path found with total cost of %d in %.1f seconds' % (totalCost, time.time() - starttime))
+        self.outputVals  = self.searchFunction(problem) # Find a path
+        self.pathCost = problem.getCostOfActions(self.outputVals.path)
+        
+        # Change direction names back
+        self.path = [Actions._directionsBack[path] for path in self.outputVals.path]
+        
+        # Take the parameters from search Problem
+        if '_expanded' in dir(problem): 
+            self._expanded=problem._expanded
+        
+        self.running_time = time.time() - starttime
+        
+        print('Path found with total cost of %d in %.1f seconds' % (self.pathCost, self.running_time))
         if '_expanded' in dir(problem): print('Search nodes expanded: %d' % problem._expanded)
 
+    def generateOutFile(self):
+        outputFile = open('output.txt','w') 
+        outputFile.write('path_to_goal: '+str(self.path)+'\n') 
+        outputFile.write('cost_of_path: '+str(self.pathCost)+'\n') 
+        outputFile.write('nodes_expanded: '+str(self._expanded)+'\n') 
+        
+        outputFile.write('fringe_size: '+str(self.outputVals.fringeSize)+'\n') 
+        outputFile.write('max_fringe_size: '+str(self.outputVals.maxFringeSize)+'\n') 
+        outputFile.write('search_depth: '+str(self.outputVals.searchDepth)+'\n') 
+        outputFile.write('max_search_depth: '+str(self.outputVals.maxSearchDepth)+'\n') 
+        outputFile.write('running_time: '+str(self.running_time)+'\n') 
+        outputFile.write('max_ram_usage: '+str(self.outputVals.maxRamUsage)+'\n') 
+        outputFile.close() 
+        
     def getActions(self):
         """
         Returns all actions else None
@@ -112,6 +134,7 @@ class SearchProblem(Actions):
             successors.append((nextState, direct_, cost))
 
         self._expanded += 1
+        print self._expanded
         
         return successors
 

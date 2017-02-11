@@ -10,10 +10,10 @@ import copy
 
 
 class Directions:
-    UP = 'UP'
-    DOWN = 'DOWN'
-    RIGHT = 'RIGHT'
-    LEFT = 'LEFT'
+    UP = 'U'
+    DOWN = 'D'
+    RIGHT = 'R'
+    LEFT = 'L'
     
     
 class Actions:
@@ -26,6 +26,12 @@ class Actions:
                    Directions.RIGHT:  (0, 1),
                    Directions.LEFT:  (0, -1)}
 
+    # Directions
+    _directionsBack = {'U': 'Up',
+                   'D': 'Down',
+                   'R': 'Right',
+                   'L': 'Left'}
+    
     _directionsAsList = _directions.items()
     
     

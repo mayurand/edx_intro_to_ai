@@ -5,8 +5,18 @@ Created on Feb 10, 2017
 '''
 
 from dataStructures import *
+import resource
 
 # from driver import printPuzzle
+
+class outputDetails:
+    def __init__(self):
+        self.maxFringeSize = 0
+        self.path = []
+        self.fringeSize = 0
+        self.searchDepth = 0
+        self.maxSearchDepth = 0
+        self.maxRamUsage = 0
 
 def printPuzzle(currentState):
     for i in range(currentState.getGridSize()):
@@ -16,29 +26,46 @@ def printPuzzle(currentState):
         print row_
     print " "
 
+
 def generic_search(problem, fringe, add_to_fringe_fn):
     closed = set()
+    outputVals = outputDetails()
     start = (problem.getStartState(), 0, [])  # (node, cost, path)
     add_to_fringe_fn(fringe, start, 0)
 
     while not fringe.isEmpty():
+        # print 'Fringe size: ',fringe.length()
+        outputVals.maxFringeSize=max(outputVals.maxFringeSize,fringe.length())
         (node, cost, path) = fringe.pop()
-
+        
         if problem.isGoalState(node):
-            return path
+            outputVals.path = path
+            outputVals.fringeSize = fringe.length()
+            outputVals.searchDepth = len(path)
+            return outputVals
         
         
         node_tuple = tuple([tuple(node.getTilePositions()[i]) for i in range(len(node.getTilePositions()))])
         if not node_tuple in closed:
             closed.add(node_tuple)
+            ram_usage = (resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1000)
+            outputVals.maxRamUsage = max(outputVals.maxRamUsage,ram_usage)
             # printPuzzle(node)
+           
             # raw_input("Press Enter to continue...")
 
             for child_node, child_action, child_cost in problem.getSuccessors(node):
-                new_cost = cost + child_cost
-                new_path = path + [child_action]
-                new_state = (child_node, new_cost, new_path)
-                add_to_fringe_fn(fringe, new_state, new_cost)
+                
+                ## Check if the resulting child node has already been explored else add it to the fringe
+                node_tuple = tuple([tuple(child_node.getTilePositions()[i]) for i in range(len(child_node.getTilePositions()))])
+                if not node_tuple in closed:
+                    new_cost = cost + child_cost
+                    new_path = path + [child_action]
+                    # Update search depth
+                    outputVals.maxSearchDepth=max(outputVals.maxSearchDepth,len(new_path))
+                    new_state = (child_node, new_cost, new_path)
+                    add_to_fringe_fn(fringe, new_state, new_cost)
+                
 
 def depthFirstSearch(problem):
     """

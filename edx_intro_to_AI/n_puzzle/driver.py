@@ -18,7 +18,6 @@ import sys
 import re
 import math
 from gameState import GameState
-import copy
 from search import SearchAgent
 from search import SearchProblem
 # from search import SearchAgent
@@ -41,7 +40,8 @@ def runGame(searchAlgo, initialGameState):
     # Send the initial state to the SearchAgent along with searchType
     searchType = SearchAgent(searchAlgo)
     searchType.registerInitialState(currentState)
-    print 'Actions to be executed:', searchType.getActions()
+    searchType.generateOutFile()
+    # print 'Actions to be executed:', searchType.getActions()
 
     
 def readCommand(argv):
