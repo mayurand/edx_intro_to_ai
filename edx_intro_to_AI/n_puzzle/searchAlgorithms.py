@@ -6,6 +6,9 @@ Created on Feb 10, 2017
 
 from dataStructures import *
 import resource
+import sys
+
+from generic_search_mod import generic_search_modified
 
 # from driver import printPuzzle
 
@@ -49,9 +52,13 @@ def generic_search(problem, fringe, add_to_fringe_fn):
         if not node_tuple in closed:
             closed.add(node_tuple)
             ram_usage = (resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1000)
+            print 'Ram usage: '+str(ram_usage)
             outputVals.maxRamUsage = max(outputVals.maxRamUsage,ram_usage)
             # printPuzzle(node)
-           
+            print 'Fringe Size: '+str(sys.getsizeof(fringe))
+            print 'closed Size in MB: '+str(int(sys.getsizeof(closed))/10**6)
+            
+            
             # raw_input("Press Enter to continue...")
 
             for child_node, child_action, child_cost in problem.getSuccessors(node):
@@ -77,12 +84,14 @@ def depthFirstSearch(problem):
     print "Start:", problem.getStartState()
     print "Is the start a goal?", problem.isGoalState(problem.getStartState())
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
+    
+    state is taken as the action taken to reach this state and it should point to previous state where it came from
     """
     fringe = Stack()
     def add_to_fringe_fn(fringe, state, cost):
         fringe.push(state)
 
-    return generic_search(problem, fringe, add_to_fringe_fn)
+    return generic_search_modified(problem, fringe, add_to_fringe_fn)
 
 
 
@@ -92,7 +101,7 @@ def breadthFirstSearch(problem):
     def add_to_fringe_fn(fringe, state, cost):
         fringe.push(state)
 
-    return generic_search(problem, fringe, add_to_fringe_fn)
+    return generic_search_modified(problem, fringe, add_to_fringe_fn)
 
 
 
@@ -102,7 +111,7 @@ def uniformCostSearch(problem):
     def add_to_fringe_fn(fringe, state, cost):
         fringe.push(state, cost)
 
-    return generic_search(problem, fringe, add_to_fringe_fn)
+    return generic_search_modified(problem, fringe, add_to_fringe_fn)
 
 
 
@@ -120,7 +129,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         new_cost = cost + heuristic(state[0], problem)
         fringe.push(state, new_cost)
 
-    return generic_search(problem, fringe, add_to_fringe_fn)
+    return generic_search_modified(problem, fringe, add_to_fringe_fn)
 
 # Abbreviations
 bfs = breadthFirstSearch
